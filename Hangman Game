@@ -1,0 +1,96 @@
+#python3
+#hangman game
+import random
+theWord=''
+
+#load words
+wordList = ["animal","canteen","computer","playground","programming",
+            "doubt","paper","work","cat","dog","machine","wander",
+            "mobile","videogame","fun","ancestor","lotion","internet",
+            "school","church","desk","mouse","tree","canopy","bottle",
+            "drive","car","house","barn","horse","hotel","chicken","mountain",
+            "snow","donut","peanut","magazine","peach","pear","watermelon"]
+
+def beginGame():
+    #decide random word
+    global correctLetters, theWord
+    wordChooser = random.randint(0,len(wordList)-1)
+    theWord = wordList[(wordChooser)]
+    #create list to show blank letters
+    correctLetters=[]
+    for x in theWord:
+        correctLetters.append('_')    
+    print(' '.join(correctLetters))
+    startGuessing()
+    
+def startGuessing():
+    global guess
+    usedLetters=[]
+    i=0
+    #using a while loop will help us keep track of guesses and use error handling without costing the user a guess for errors
+    while i < 8:
+        if i > 0:   
+            print('\n \n' + 'Here are your previous guesses: ')
+            print(' '.join(usedLetters))
+            print('Here is what you have correct so far...')
+            print(' '.join(correctLetters))
+        guess=input('Please enter your guess: ')
+        #some exception handling
+        if len(guess)>1:
+            print('It looks like you typed more than one letter, try again using one letter\n\n')
+            continue
+        if not guess.isalpha():
+            print('There are only letters in the word, try again using a single letter.\n\n')
+            continue
+        if guess in usedLetters:
+            print('You already guessed that letter... try again with a new letter!\n\n')
+            continue
+        #if the letter is in the word?
+        if guess in theWord:
+            print('That letter is in the word!')
+            usedLetters.append(guess)
+            if correctLetter(correctLetters, guess, theWord):
+                print('\n\nCongratulations! You correctly guessed the word! The word was: ' + theWord)
+                break
+            if i<1:
+                print('Here is what you have correct so far...')
+                print(' '.join(correctLetters))
+            continue
+        #if the letter isn't in the word
+        if guess not in theWord:
+            print('I am sorry, that letter is not in the word.  Try another letter')
+            usedLetters.append(guess)
+        #if you get here, you didn't have any errors in your guess and your guess wasn't right.... i goes up by one
+            #to count as a wrong guess
+        i+=1
+    
+    print('Your guessed letters were: ' +' '.join(usedLetters))
+    #if i=8 then we lost
+    if i == 8:
+        print('\nSorry, you lost. \n  The word was: ' + theWord)
+        print('Would you like to play again? y/n')
+        if input() == 'y':
+            beginGame()
+    #if i isn't 8 then the user won!
+    else:
+        print('Would you like to play again? y/n')
+        if input() == 'y':
+            beginGame()
+        
+        
+def correctLetter(correctLetters, guess, theWord):
+    for i in range(0,len(theWord)):
+        #replace the _ in the correctLetters list with
+        #the letter that was correct
+        #the loop checks for more than one occurance of the letter
+        if theWord[i]==guess:
+            correctLetters[i]=guess
+        #if there are no more _ in the correctLetters list,
+            #the word has been guessed!
+        if not '_' in correctLetters:
+            return True
+
+beginGame()
+
+
+
